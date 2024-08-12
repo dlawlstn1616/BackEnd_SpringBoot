@@ -3,6 +3,7 @@ package com.restapi.emp.exception.advice;
 import com.restapi.emp.exception.ErrorObject;
 import com.restapi.emp.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
@@ -32,7 +33,6 @@ public class DefaultExceptionAdvice {
 
     /*
         Spring6 버전에 추가된 ProblemDetail 객체에 에러정보를 담아서 리턴하는 방법
-        오류 메세지를 보여줄 때, 메세지 항목들을 표준화 해서 보여주는 장점이 있음
      */
     @ExceptionHandler(ResourceNotFoundException.class)
     protected ProblemDetail handleException(ResourceNotFoundException e) {
@@ -43,6 +43,21 @@ public class DefaultExceptionAdvice {
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
+
+    //Data Duplication error
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    protected ProblemDetail handleException(DataIntegrityViolationException e) {
+        //422 UNPROCESSABLE ENTITY = Request matched and met syntactic contract but validation failed
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
+        problemDetail.setTitle("데이터 중복 오류");
+//        problemDetail.setTitle("Duplication Error");
+        problemDetail.setDetail("요청하신 데이터가 이미 존재합니다.");
+//        problemDetail.setDetail(e.getMessage());
+        problemDetail.setProperty("errorMsg", e.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
 
     //숫자타입의 값에 문자열타입의 값을 입력으로 받았을때 발생하는 오류
     @ExceptionHandler(HttpMessageNotReadableException.class)
