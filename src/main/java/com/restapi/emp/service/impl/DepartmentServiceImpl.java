@@ -41,12 +41,17 @@ public class DepartmentServiceImpl implements DepartmentService {
 //        Department department = optional.orElseThrow(
 //                () -> new ResourceNotFoundException("Department is not exists with a given id: " + departmentId) );
 
+        Department department = getDepartment(departmentId);
+        return DepartmentMapper.mapToDepartmentDto(department);
+    }
+
+    private Department getDepartment(Long departmentId) {
         String errMsg = String.format("Department is not exists with a given id: %s", departmentId);
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(errMsg, HttpStatus.NOT_FOUND)
                 );
-        return DepartmentMapper.mapToDepartmentDto(department);
+        return department;
     }
 
     // Stream을 꼭 써야함
@@ -64,10 +69,11 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDto updateDepartment(Long departmentId, DepartmentDto updatedDepartment) {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Department is not exists with a given id:"+ departmentId)
-                );
+        Department department = getDepartment(departmentId);
+//                Department department = departmentRepository.findById(departmentId)
+//                .orElseThrow(() ->
+//                        new ResourceNotFoundException("Department is not exists with a given id:"+ departmentId)
+//                );
 
         // Dirty Check - setter method 호출
         department.setDepartmentName(updatedDepartment.getDepartmentName());
@@ -76,7 +82,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         // @Transactional이 걸려있으면 필요 없음
         //Department savedDepartment = departmentRepository.save(department);
 
-        return DepartmentMapper.mapToDepartmentDto(savedDepartment);
+        return DepartmentMapper.mapToDepartmentDto(department);
     }
 
     @Override
