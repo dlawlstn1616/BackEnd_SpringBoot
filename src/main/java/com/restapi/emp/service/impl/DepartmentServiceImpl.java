@@ -75,9 +75,11 @@ public class DepartmentServiceImpl implements DepartmentService {
 //                        new ResourceNotFoundException("Department is not exists with a given id:"+ departmentId)
 //                );
 
-        // Dirty Check - setter method 호출
-        department.setDepartmentName(updatedDepartment.getDepartmentName());
-        department.setDepartmentDescription(updatedDepartment.getDepartmentDescription());
+        // Dirty Check - setter method 호출 -> validation으로 수정 가능
+        if (updatedDepartment.getDepartmentName() != null)
+            department.setDepartmentName(updatedDepartment.getDepartmentName());
+        if (updatedDepartment.getDepartmentDescription() != null)
+            department.setDepartmentDescription(updatedDepartment.getDepartmentDescription());
 
         // @Transactional이 걸려있으면 필요 없음
         //Department savedDepartment = departmentRepository.save(department);
