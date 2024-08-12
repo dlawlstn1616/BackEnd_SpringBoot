@@ -45,13 +45,14 @@ public class DepartmentServiceImpl implements DepartmentService {
         return DepartmentMapper.mapToDepartmentDto(department);
     }
 
-    private Department getDepartment(Long departmentId) {
-        String errMsg = String.format("Department is not exists with a given id: %s", departmentId);
-        return departmentRepository.findById(departmentId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(errMsg, HttpStatus.NOT_FOUND)
-                );
-    }
+    // EmpDeptCommon 클래스의 getDepartment() 메서드로 대체됨
+//    private Department getDepartment(Long departmentId) {
+//        String errMsg = String.format("Department is not exists with a given id: %s", departmentId);
+//        return departmentRepository.findById(departmentId)
+//                .orElseThrow(() ->
+//                        new ResourceNotFoundException(errMsg, HttpStatus.NOT_FOUND)
+//                );
+//    }
 
     // Stream을 꼭 써야함
     @Override
@@ -69,7 +70,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentDto updateDepartment(Long departmentId, DepartmentDto updatedDepartment) {
         // Refactoring - 아래와 같은 code를 extract method를 통해 getDepartment를 만들어서 사용
-        Department department = getDepartment(departmentId);
+        Department department = EmpDeptCommon.getDepartment(departmentId, departmentRepository);
 //                Department department = departmentRepository.findById(departmentId)
 //                .orElseThrow(() ->
 //                        new ResourceNotFoundException("Department is not exists with a given id:"+ departmentId)
@@ -90,7 +91,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void deleteDepartment(Long departmentId) {
         // Refactoring - 아래와 같은 code를 extract method를 통해 getDepartment를 만들어서 사용
-        Department department = getDepartment(departmentId);
+        Department department = EmpDeptCommon.getDepartment(departmentId, departmentRepository);
 //        departmentRepository.findById(departmentId)
 //                .orElseThrow(() ->
 //                        new ResourceNotFoundException("Department is not exists with a given id: " + departmentId)
