@@ -47,11 +47,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private Department getDepartment(Long departmentId) {
         String errMsg = String.format("Department is not exists with a given id: %s", departmentId);
-        Department department = departmentRepository.findById(departmentId)
+        return departmentRepository.findById(departmentId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(errMsg, HttpStatus.NOT_FOUND)
                 );
-        return department;
     }
 
     // Stream을 꼭 써야함
@@ -69,6 +68,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDto updateDepartment(Long departmentId, DepartmentDto updatedDepartment) {
+        // Refactoring - 아래와 같은 code를 extract method를 통해 getDepartment를 만들어서 사용
         Department department = getDepartment(departmentId);
 //                Department department = departmentRepository.findById(departmentId)
 //                .orElseThrow(() ->
@@ -87,11 +87,15 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public void deleteDepartment(Long departmentId) {
-        departmentRepository.findById(departmentId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Department is not exists with a given id: " + departmentId)
-                );
+        // Refactoring - 아래와 같은 code를 extract method를 통해 getDepartment를 만들어서 사용
+        Department department = getDepartment(departmentId);
+//        departmentRepository.findById(departmentId)
+//                .orElseThrow(() ->
+//                        new ResourceNotFoundException("Department is not exists with a given id: " + departmentId)
+//                );
 
-        departmentRepository.deleteById(departmentId);
+        // department object로 삭제하도록 변경
+        departmentRepository.delete(department);
+//        departmentRepository.deleteById(departmentId);
     }
 }
