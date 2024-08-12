@@ -71,29 +71,31 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(updatedEmployee.getEmail() != null)
             employee.setEmail(updatedEmployee.getEmail());
 
-        Department department = departmentRepository.findById(updatedEmployee.getDepartmentId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Department is not exists with id: " + updatedEmployee.getDepartmentId(),
-                                HttpStatus.NOT_FOUND
-                                ));
+        Department department = EmpDeptCommon.getDepartment(updatedEmployee.getDepartmentId(), departmentRepository);
+//                departmentRepository.findById(updatedEmployee.getDepartmentId())
+//                .orElseThrow(() ->
+//                        new ResourceNotFoundException(
+//                                "Department is not exists with id: " + updatedEmployee.getDepartmentId(),
+//                                HttpStatus.NOT_FOUND
+//                                ));
 
         employee.setDepartment(department);
 
-        Employee updatedEmployeeObj = employeeRepository.save(employee);
+//        Employee updatedEmployeeObj = employeeRepository.save(employee);
 
-        return EmployeeMapper.mapToEmployeeDto(updatedEmployeeObj);
+        return EmployeeMapper.mapToEmployeeDto(employee);
     }
 
     @Override
     public void deleteEmployee(Long employeeId) {
 
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Employee is not exists with given id: " + employeeId,
-                        HttpStatus.NOT_FOUND)
-        );
-
-        employeeRepository.deleteById(employeeId);
+        Employee employee = EmpDeptCommon.getEmployee(employeeId, employeeRepository);
+//                employeeRepository.findById(employeeId)
+//                .orElseThrow(() -> new ResourceNotFoundException(
+//                        "Employee is not exists with given id: " + employeeId,
+//                        HttpStatus.NOT_FOUND)
+//        );
+        employeeRepository.delete(employee);
+//        employeeRepository.deleteById(employeeId);
     }
 }
